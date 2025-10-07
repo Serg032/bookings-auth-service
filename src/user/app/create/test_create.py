@@ -1,0 +1,34 @@
+import pytest
+from src.user.app.create.register_create import CreateHandler
+from src.user.infrastructure.repository_in_memory import RepositoryInMemory
+from src.user.domain.register_command import CreateCommand
+from src.user.domain.user_already_created_exception import UserAlreadyCreatedException
+
+
+def test_when_creating_a_user_it_shuould_be_created_and_return_the_public_user():
+    repository = RepositoryInMemory()
+    handler = CreateHandler(repository)
+    username = "Jonh"
+    password = "123456"
+    command = CreateCommand(username, password)
+
+    public_user = handler.handle(command)
+
+    for user_at_repository in repository._users:
+        if user_at_repository._username == username:
+            user = user_at_repository
+
+    assert public_user.username == username
+    assert user._password == password
+
+
+def test_register_handler_should_return_an_exception_if_the_username_already_exists():
+    repository = RepositoryInMemory()
+    handler = CreateHandler(repository)
+    username = "Jonh"
+    password = "123456"
+    command = CreateCommand(username, password)
+
+    handler.handle(command)
+    with pytest.raises(UserAlreadyCreatedException):
+        handler.handle(command)
