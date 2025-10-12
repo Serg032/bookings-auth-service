@@ -1,4 +1,6 @@
-from fastapi import FastAPI
+import os
+from dotenv import load_dotenv
+from fastapi import FastAPI, status, HTTPException
 from pydantic import BaseModel
 from src.user.app.create.register_create import CreateHandler
 from src.user.app.find_by_username.find_by_username_handler import FindByUsernameHandler
@@ -8,6 +10,9 @@ from src.user.infrastructure.auth_adapter import JWTAuthAdapter
 from src.user.infrastructure.postgres_repository import PostgresRepository
 from src.user.infrastructure.bcrypt_password_hasher import BcryptPasswordHasher
 from src.user.infrastructure.repository_in_memory import RepositoryInMemory
+from src.user.domain.user_already_created_exception import UserAlreadyCreatedException
+
+load_dotenv()
 
 
 class RegisterBody(BaseModel):
@@ -16,10 +21,10 @@ class RegisterBody(BaseModel):
 
 
 app = FastAPI()
-users_tablename = "users"
+users_tablename = os.getenv("USERS_TABLENAME", "users")
 
 
-@app.post("/register")
+@app.post("/register", status_code=status.HTTP_201_CREATED)
 async def register(body: RegisterBody):
     password_hasher = BcryptPasswordHasher()
     repository = PostgresRepository(users_tablename, password_hasher)
@@ -27,7 +32,11 @@ async def register(body: RegisterBody):
     command = CreateCommand(body.username, body.password)
     register_handler = CreateHandler(repository)
 
-    public_user = register_handler.handle(command)
+    try:
+        public_user = register_handler.handle(command)
+    except UserAlreadyCreatedException as exc:
+        # Conflict: user already exists
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc))
     login_output = auth_adapter.login(body.username, body.password)
 
     return {
@@ -45,8 +54,9 @@ async def get_by_username(username):
     return find_by_username_handler.handle(username)
 
 
-@app.put("/update/")
+@app.put("/update/test_id")
 async def update():
+    print("XAXO")   
     repository = RepositoryInMemory()
     print(repository.update("", UpdateCommand(None)))
 

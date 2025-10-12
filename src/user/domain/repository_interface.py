@@ -14,6 +14,6 @@ class Repository(ABC):
     def find_by_username(self, username: str) -> Optional[User]:
         pass
 
-    @abstractmethod
-    def update(self, id: str, command: UpdateCommand) -> Optional[PublicUser]:
-        pass
+    # @abstractmethod
+    # def update(self, id: str, command: UpdateCommand) -> Optional[PublicUser]:
+    #     pass
