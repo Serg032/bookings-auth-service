@@ -57,3 +57,16 @@ def test_update_all_handler():
     assert update_result is not None
     assert update_result.username == "Wilfred"
     assert updated_user._refresh_token == refresh_token
+
+
+def test_update_username():
+    repository = RepositoryInMemory()
+    register_handler = CreateHandler(repository)
+    username = "Jonh"
+    password = "123456"
+    command = CreateCommand(username, password)
+    a = register_handler.handle(command)
+    print(f"Public USER {a} {a.username}")
+    update_handler = UpdateHandler(repository)
+    t = update_handler.handle()
+

@@ -22,6 +22,18 @@ class RepositoryInMemory(Repository):
         return None
 
     def update(self, id: str, command: UpdateCommand) -> Optional[PublicUser]:
+        userToUpdate: User | None
+
+        for user in self._users:
+            if user._id == id:
+                userToUpdate = user
+        
+        if userToUpdate == None:
+            # throw User Not Found
+            pass
+
+        
+
         for idx, user in enumerate(self._users):
 
             if command._username is not None:
