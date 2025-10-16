@@ -16,7 +16,7 @@ class User:
     def set_refresh_token(self, refresh_token: str):
         self._refresh_token = refresh_token
 
-    def toDict(self):
+    def to_dict(self):
         return {
             "id": self._id,
             "username": self._username,

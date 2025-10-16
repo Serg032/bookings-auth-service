@@ -9,4 +9,5 @@ class UpdateHandler:
         self._repository = repository
 
     def handle(self, id: str, command: UpdateCommand) -> Optional[PublicUser]:
-        return self._repository.update(id, command)
+        # user_to_update = self._repository.find_by_id()
+        return None

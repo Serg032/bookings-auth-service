@@ -13,6 +13,15 @@ class RepositoryInMemory(Repository):
         self._users.append(user)
         return PublicUser(user._id, user._username)
 
+    def find_by_id(self, id: str) -> Optional[User]:
+        user: User | None = None
+
+        for user_at_repository in self._users:
+            if user_at_repository._id == id:
+                user = user_at_repository
+
+        return user
+
     def find_by_username(self, username: str) -> Optional[User]:
         for user in self._users:
 
@@ -21,30 +30,15 @@ class RepositoryInMemory(Repository):
 
         return None
 
-    def update(self, id: str, command: UpdateCommand) -> Optional[PublicUser]:
-        userToUpdate: User | None
+    def update(self, user: User, command: UpdateCommand) -> Optional[PublicUser]:
+        if command._username is not None:
+            user._username = command._username
 
-        for user in self._users:
-            if user._id == id:
-                userToUpdate = user
-        
-        if userToUpdate == None:
-            # throw User Not Found
-            pass
+        if command._refresh_token is not None:
+            user._refresh_token = command._refresh_token
 
-        
-
-        for idx, user in enumerate(self._users):
-
-            if command._username is not None:
-                user.set_username(command._username)
-
-            if command._refresh_token is not None:
-                user.set_refresh_token(command._refresh_token)
-
-            self._users[idx] = User(
-                user._id, user._username, user._password, user._refresh_token
-            )
-            return PublicUser(user._id, user._username)
+        for user_at_repository in self._users:
+            if user_at_repository._id == user._id:
+                user_at_repository = user
 
         return None

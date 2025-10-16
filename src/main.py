@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, status, HTTPException
 from pydantic import BaseModel
 from src.user.app.create.register_create import CreateHandler
+from src.user.app.find_by_id.find_by_id_handler import FindByIdHandler
 from src.user.app.find_by_username.find_by_username_handler import FindByUsernameHandler
 from src.user.domain.register_command import CreateCommand
 from src.user.domain.update_command import UpdateCommand
@@ -46,6 +47,14 @@ async def register(body: RegisterBody):
     }
 
 
+@app.get("/find-by-id/{id}")
+async def find_by_id(id):
+    repository = PostgresRepository(users_tablename)
+    find_by_id_handler = FindByIdHandler(repository)
+
+    return find_by_id_handler.handle(id)
+
+
 @app.get("/get-by-username/{username}")
 async def get_by_username(username):
     repository = PostgresRepository(users_tablename)
@@ -56,7 +65,7 @@ async def get_by_username(username):
 
 @app.put("/update/test_id")
 async def update():
-    print("XAXO")   
+    print("XAXO")
     repository = RepositoryInMemory()
     print(repository.update("", UpdateCommand(None)))
 

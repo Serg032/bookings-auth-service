@@ -18,9 +18,8 @@ class PostgresRepository(Repository):
         self._password_hasher = password_hasher
 
     def create(self, user: User) -> PublicUser:
-
         hashed_password = self._password_hasher.hash(user._password)
-        user_to_insert = user.toDict()
+        user_to_insert = user.to_dict()
         user_to_insert["password"] = hashed_password
         result = (
             self._supabase.table(self._users_tablename).insert(user_to_insert).execute()
@@ -32,6 +31,19 @@ class PostgresRepository(Repository):
         created_user = result.data[0]
 
         return PublicUser(created_user["id"], created_user["username"])
+
+    def find_by_id(self, id: str) -> Optional[User]:
+        response = (
+            self._supabase.table(self._users_tablename)
+            .select("*")
+            .eq("id", id)
+            .execute()
+        )
+
+        if response and response.data and response.data[0] is not None:
+            data = response.data[0]
+            return User.unmarshall(data)
+            
 
     def find_by_username(self, username: str) -> Optional[User]:
         response = (
