@@ -10,7 +10,9 @@ from src.user.domain.update_command import UpdateCommand
 
 
 class PostgresRepository(Repository):
-    def __init__(self, tablename: str, password_hasher: PasswordHasher) -> None:
+    def __init__(
+        self, tablename: str, password_hasher: Optional[PasswordHasher]
+    ) -> None:
         load_dotenv()
         supabase_url = os.environ.get("SUPABASE_URL")
         supabase_key = os.environ.get("SUPABASE_KEY")
@@ -19,6 +21,8 @@ class PostgresRepository(Repository):
         self._password_hasher = password_hasher
 
     def create(self, user: User) -> User:
+        if self._password_hasher is None:
+            raise Exception("Password Haser neded when creating a user")
         hashed_password = self._password_hasher.hash(user._password)
         user_to_insert = user.to_dict()
         user_to_insert["password"] = hashed_password

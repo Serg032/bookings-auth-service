@@ -17,5 +17,4 @@ class FindByIdHandler:
         if user is None:
             raise UserNotFoundException(id)
 
-        if user is not None:
-            return PublicUser(user._id, user._username)
+        return PublicUser(user._id, user._username)
