@@ -9,9 +9,9 @@ class RepositoryInMemory(Repository):
     def __init__(self) -> None:
         self._users: List[User] = []
 
-    def create(self, user: User) -> PublicUser:
+    def create(self, user: User) -> User:
         self._users.append(user)
-        return PublicUser(user._id, user._username)
+        return User(user._id, user._username, user._password, user._refresh_token)
 
     def find_by_id(self, id: str) -> Optional[User]:
         user: User | None = None
@@ -30,7 +30,7 @@ class RepositoryInMemory(Repository):
 
         return None
 
-    def update(self, user: User, command: UpdateCommand) -> Optional[PublicUser]:
+    def update(self, user: User, command: UpdateCommand) -> Optional[User]:
         if command._username is not None:
             user._username = command._username
 
@@ -41,4 +41,4 @@ class RepositoryInMemory(Repository):
             if user_at_repository._id == user._id:
                 user_at_repository = user
 
-        return None
+        return user

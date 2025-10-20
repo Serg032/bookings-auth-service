@@ -11,5 +11,15 @@ def test_update_username_handler():
     username = "John"
     password = "123456"
     create_command = CreateCommand(username, password)
-    create_handler.handle(create_command)
+    created_user = create_handler.handle(create_command)
     update_handler = UpdateHandler(repository)
+
+    user_id = repository._users[0]._id
+
+    username_to_update = "Sergio"
+    command = UpdateCommand(username_to_update, None)
+
+    updated_public_user = update_handler.handle(user_id, command)
+
+    assert updated_public_user.id == created_user.id
+    assert updated_public_user.username == username_to_update

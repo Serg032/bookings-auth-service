@@ -6,6 +6,7 @@ from src.user.domain.entity import User
 from supabase import create_client, Client
 from dotenv import load_dotenv
 from src.user.domain.password_hasher_interface import PasswordHasher
+from src.user.domain.update_command import UpdateCommand
 
 
 class PostgresRepository(Repository):
@@ -17,7 +18,7 @@ class PostgresRepository(Repository):
         self._supabase: Client = create_client(supabase_url, supabase_key)
         self._password_hasher = password_hasher
 
-    def create(self, user: User) -> PublicUser:
+    def create(self, user: User) -> User:
         hashed_password = self._password_hasher.hash(user._password)
         user_to_insert = user.to_dict()
         user_to_insert["password"] = hashed_password
@@ -30,7 +31,12 @@ class PostgresRepository(Repository):
 
         created_user = result.data[0]
 
-        return PublicUser(created_user["id"], created_user["username"])
+        return User(
+            created_user["id"],
+            created_user["username"],
+            created_user["password"],
+            created_user["refresh_token"],
+        )
 
     def find_by_id(self, id: str) -> Optional[User]:
         response = (
@@ -43,7 +49,6 @@ class PostgresRepository(Repository):
         if response and response.data and response.data[0] is not None:
             data = response.data[0]
             return User.unmarshall(data)
-            
 
     def find_by_username(self, username: str) -> Optional[User]:
         response = (
@@ -58,6 +63,30 @@ class PostgresRepository(Repository):
             marshalled_user = User.unmarshall(data)
 
             return marshalled_user
+
+    def update(self, user: User, command: UpdateCommand) -> Optional[User]:
+        update_fields: dict = {}
+
+        if command._username is not None:
+            update_fields["username"] = command._username
+        if command._refresh_token is not None:
+            update_fields["refresh_token"] = command._refresh_token
+
+        if not update_fields:
+            return user
+
+        response = (
+            self._supabase.table(self._users_tablename)
+            .update(update_fields)
+            .eq("id", user._id)
+            .execute()
+        )
+
+        if response and response.data and response.data[0] is not None:
+            updated = response.data[0]
+            return User.unmarshall(updated)
+
+        return None
 
     def clear_database(self, username: str):
         # Supabase requiere un filtro en delete(); usamos uno que coincide con todas las filas

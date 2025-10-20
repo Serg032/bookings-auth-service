@@ -36,7 +36,6 @@ async def register(body: RegisterBody):
     try:
         public_user = register_handler.handle(command)
     except UserAlreadyCreatedException as exc:
-        # Conflict: user already exists
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc))
     login_output = auth_adapter.login(body.username, body.password)
 

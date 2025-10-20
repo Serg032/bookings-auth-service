@@ -1,5 +1,4 @@
-fastapi>=0.110,<0.116
-uvicorn[standard]>=0.23,<0.32
+fastapi[standard]>=0.110,<0.116
 pydantic>=2.5,<3
 python-dotenv>=1.0,<2
 supabase>=2.5,<3

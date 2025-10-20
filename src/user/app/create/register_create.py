@@ -1,4 +1,6 @@
+from typing import Optional
 from uuid import uuid4
+from src.user.domain.public_user import PublicUser
 from src.user.domain.repository_interface import Repository
 from src.user.domain.register_command import CreateCommand
 from src.user.domain.entity import User
@@ -13,7 +15,7 @@ class CreateHandler:
     ) -> None:
         self._repository = repository
 
-    def handle(self, command: CreateCommand):
+    def handle(self, command: CreateCommand) -> Optional[PublicUser]:
         created_user = self._repository.find_by_username(command._username)
 
         if created_user is not None:
@@ -23,4 +25,6 @@ class CreateHandler:
 
         user = User(str(uuid4()), command._username, command._password, None)
 
-        return self._repository.create(user)
+        created_user = self._repository.create(user)
+
+        return PublicUser(created_user._id, created_user._username)
