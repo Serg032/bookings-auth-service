@@ -16,6 +16,6 @@ class UpdateHandler:
         if user_to_update is None:
             raise UserNotFoundException(id)
 
-        resutl = self._repository.update(user_to_update, command)
+        result = self._repository.update(user_to_update, command)
 
-        return PublicUser(resutl._id, resutl._username)
+        return PublicUser(result._id, result._username)
