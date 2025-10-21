@@ -32,13 +32,13 @@ class CreateHandler:
                 f"User already created with email {command._email}"
             )
 
-        user = User(
-            str(uuid4()),
-            command._name,
-            command._surname,
-            command._email,
-            command._password,
-            None,
+        self._repository.create(
+            User(
+                str(uuid4()),
+                command._name,
+                command._surname,
+                command._email,
+                command._password,
+                None,
+            )
         )
-
-        self._repository.create(user)
