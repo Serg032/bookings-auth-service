@@ -7,7 +7,7 @@ from src.user.domain.update_command import UpdateCommand
 
 class Repository(ABC):
     @abstractmethod
-    def create(self, user: User) -> User:
+    def create(self, user: User) -> None:
         pass
 
     @abstractmethod
@@ -15,7 +15,7 @@ class Repository(ABC):
         pass
 
     @abstractmethod
-    def find_by_username(self, username: str) -> Optional[User]:
+    def find_by_email(self, email: str) -> Optional[User]:
         pass
 
     @abstractmethod

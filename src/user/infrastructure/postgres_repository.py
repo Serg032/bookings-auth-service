@@ -1,6 +1,5 @@
 import os
 from typing import Optional
-from src.user.domain.public_user import PublicUser
 from src.user.domain.repository_interface import Repository
 from src.user.domain.entity import User
 from supabase import create_client, Client
@@ -20,27 +19,13 @@ class PostgresRepository(Repository):
         self._supabase: Client = create_client(supabase_url, supabase_key)
         self._password_hasher = password_hasher
 
-    def create(self, user: User) -> User:
+    def create(self, user: User) -> None:
         if self._password_hasher is None:
             raise Exception("Password Haser neded when creating a user")
         hashed_password = self._password_hasher.hash(user._password)
         user_to_insert = user.to_dict()
         user_to_insert["password"] = hashed_password
-        result = (
-            self._supabase.table(self._users_tablename).insert(user_to_insert).execute()
-        )
-
-        if result.data[0] is None:
-            raise Exception("Something went wrong, there is no data to retreive")
-
-        created_user = result.data[0]
-
-        return User(
-            created_user["id"],
-            created_user["username"],
-            created_user["password"],
-            created_user["refresh_token"],
-        )
+        self._supabase.table(self._users_tablename).insert(user_to_insert).execute()
 
     def find_by_id(self, id: str) -> Optional[User]:
         response = (
@@ -54,11 +39,11 @@ class PostgresRepository(Repository):
             data = response.data[0]
             return User.unmarshall(data)
 
-    def find_by_username(self, username: str) -> Optional[User]:
+    def find_by_email(self, email: str) -> Optional[User]:
         response = (
             self._supabase.table(self._users_tablename)
             .select("*")
-            .eq("username", username)
+            .eq("email", email)
             .execute()
         )
 

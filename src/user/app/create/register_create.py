@@ -1,5 +1,7 @@
 from typing import Optional
 from uuid import uuid4
+from src.user.domain.email_not_well_formed_exception import EmailNotWellFormedException
+from src.user.domain.guard_email_well_formed import is_mail_well_formed
 from src.user.domain.public_user import PublicUser
 from src.user.domain.repository_interface import Repository
 from src.user.domain.register_command import CreateCommand
@@ -15,16 +17,28 @@ class CreateHandler:
     ) -> None:
         self._repository = repository
 
-    def handle(self, command: CreateCommand) -> Optional[PublicUser]:
-        created_user = self._repository.find_by_username(command._username)
+    def handle(self, command: CreateCommand) -> None:
+        is_mail_well_formed_result = is_mail_well_formed(command._email)
+
+        if is_mail_well_formed_result is False:
+            raise EmailNotWellFormedException(
+                f"Email {command._email} is not well formed"
+            )
+
+        created_user = self._repository.find_by_email(command._email)
 
         if created_user is not None:
             raise UserAlreadyCreatedException(
-                f"User already created with username {command._username}"
+                f"User already created with email {command._email}"
             )
 
-        user = User(str(uuid4()), command._username, command._password, None)
+        user = User(
+            str(uuid4()),
+            command._name,
+            command._surname,
+            command._email,
+            command._password,
+            None,
+        )
 
-        created_user = self._repository.create(user)
-
-        return PublicUser(created_user._id, created_user._username)
+        self._repository.create(user)

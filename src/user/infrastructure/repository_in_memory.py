@@ -9,9 +9,8 @@ class RepositoryInMemory(Repository):
     def __init__(self) -> None:
         self._users: List[User] = []
 
-    def create(self, user: User) -> User:
+    def create(self, user: User) -> None:
         self._users.append(user)
-        return User(user._id, user._username, user._password, user._refresh_token)
 
     def find_by_id(self, id: str) -> Optional[User]:
         user: User | None = None
@@ -22,10 +21,10 @@ class RepositoryInMemory(Repository):
 
         return user
 
-    def find_by_username(self, username: str) -> Optional[User]:
+    def find_by_email(self, email: str) -> Optional[User]:
         for user in self._users:
 
-            if user._username == username:
+            if user._email == email:
                 return user
 
         return None
