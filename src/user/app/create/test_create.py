@@ -1,10 +1,14 @@
 import pytest
-from src.user.domain.email_not_well_formed_exception import EmailNotWellFormedException
-from src.user.domain.entity import User
-from src.user.app.create.register_create import CreateHandler
+from src.user.domain.exceptions.email_not_well_formed_exception import (
+    EmailNotWellFormedException,
+)
+from src.user.domain.entities.entity import User
+from src.user.app.create.create_handler import CreateHandler
 from src.user.infrastructure.repository_in_memory import RepositoryInMemory
 from src.user.domain.register_command import CreateCommand
-from src.user.domain.user_already_created_exception import UserAlreadyCreatedException
+from src.user.domain.exceptions.user_already_created_exception import (
+    UserAlreadyCreatedException,
+)
 
 
 def test_when_creating_a_user_it_shuould_be_created_and_return_the_public_user():

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from src.user.domain.entity import User
+from src.user.domain.entities.entity import User
 
 
 class TokenBuilder(ABC):

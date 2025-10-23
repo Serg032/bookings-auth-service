@@ -1,7 +1,6 @@
 from typing import List, Optional
 from src.user.domain.repository_interface import Repository
-from src.user.domain.entity import User
-from src.user.domain.public_user import PublicUser
+from src.user.domain.entities.entity import User
 from src.user.domain.update_command import UpdateCommand
 
 

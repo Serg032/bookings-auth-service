@@ -1,5 +1,8 @@
 from typing import Optional, Self
 
+from src.user.domain.value_objects.email import Email
+from src.user.domain.value_objects.password import Password
+
 
 class User:
     def __init__(
@@ -7,8 +10,8 @@ class User:
         id: str,
         name: str,
         surname: str,
-        email: str,
-        password: str,
+        email: Email,
+        password: Password,
         refresh_token: Optional[str],
     ) -> None:
         self._id = id
@@ -23,8 +26,8 @@ class User:
             "id": self._id,
             "name": self._name,
             "surname": self._surname,
-            "email": self._email,
-            "password": self._password,
+            "email": self._email.get_value(),
+            "password": self._password.get_value(),
             "refresh_token": self._refresh_token,
         }
 

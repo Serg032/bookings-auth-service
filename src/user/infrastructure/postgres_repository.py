@@ -1,7 +1,7 @@
 import os
 from typing import Optional
 from src.user.domain.repository_interface import Repository
-from src.user.domain.entity import User
+from src.user.domain.entities.entity import User
 from supabase import create_client, Client
 from dotenv import load_dotenv
 from src.user.domain.password_hasher_interface import PasswordHasher

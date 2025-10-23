@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Optional
-from src.user.domain.entity import User
-from src.user.domain.public_user import PublicUser
+from src.user.domain.entities.entity import User
 from src.user.domain.update_command import UpdateCommand
 
 

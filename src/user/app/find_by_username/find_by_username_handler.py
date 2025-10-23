@@ -1,6 +1,6 @@
 from typing import Optional
 from src.user.domain.repository_interface import Repository
-from src.user.domain.entity import User
+from src.user.domain.entities.entity import User
 
 
 class FindByUsernameHandler:

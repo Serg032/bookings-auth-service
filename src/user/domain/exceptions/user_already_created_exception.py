@@ -1,4 +1,4 @@
-from src.user.domain.domain_exception_interface import DomainException
+from src.user.domain.exceptions.domain_exception_interface import DomainException
 
 
 class UserAlreadyCreatedException(DomainException):
