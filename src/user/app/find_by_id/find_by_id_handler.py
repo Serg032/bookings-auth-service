@@ -1,7 +1,7 @@
 from typing import Optional
-from src.user.domain.public_user import PublicUser
+from src.user.domain.entities.public_user import PublicUser
 from src.user.domain.repository_interface import Repository
-from src.user.domain.user_not_found_exception import UserNotFoundException
+from src.user.domain.exceptions.user_not_found_exception import UserNotFoundException
 
 
 class FindByIdHandler:
@@ -17,4 +17,4 @@ class FindByIdHandler:
         if user is None:
             raise UserNotFoundException(id)
 
-        return PublicUser(user._id, user._username)
+        return PublicUser(user._id, user._name, user._surname, user._email.get_value())

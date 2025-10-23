@@ -1,20 +1,20 @@
 import pytest
-from src.user.app.create.register_create import CreateHandler
+from src.user.app.create.create_handler import CreateHandler
 from src.user.app.find_by_id.find_by_id_handler import FindByIdHandler
-from src.user.domain.register_command import CreateCommand
-from src.user.domain.user_not_found_exception import UserNotFoundException
+from src.user.app.create.create_command import CreateCommand
+from src.user.domain.exceptions.user_not_found_exception import UserNotFoundException
 from src.user.infrastructure.repository_in_memory import RepositoryInMemory
 
 
 def test_find_by_id_handler_successfull():
     repository = RepositoryInMemory()
     create_handler = CreateHandler(repository)
-
-    username = "John"
-    password = "123456"
-
-    create_command = CreateCommand(username, password)
-    create_handler.handle(create_command)
+    user_name = "Jonh"
+    user_surname = "Doe"
+    user_email = "johndoe@test.com"
+    user_password = "12345678"
+    command = CreateCommand(user_name, user_surname, user_email, user_password)
+    create_handler.handle(command)
 
     user_id = repository._users[0]._id
     find_by_id_handler = FindByIdHandler(repository)
@@ -23,7 +23,9 @@ def test_find_by_id_handler_successfull():
     user_to_dict = user.to_dict()
 
     assert user_to_dict["id"] == user_id
-    assert user_to_dict["username"] == username
+    assert user_to_dict["name"] == user_name
+    assert user_to_dict["surname"] == user_surname
+    assert user_to_dict["email"] == user_email
 
 
 def test_find_by_id_handler_failed():

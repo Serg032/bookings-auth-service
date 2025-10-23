@@ -10,15 +10,15 @@ class User:
         id: str,
         name: str,
         surname: str,
-        email: Email,
-        password: Password,
+        email: str,
+        password: str,
         refresh_token: Optional[str],
     ) -> None:
         self._id = id
         self._name = name
         self._surname = surname
-        self._email = email
-        self._password = password
+        self._email = Email(email)
+        self._password = Password(password)
         self._refresh_token = refresh_token
 
     def to_dict(self):

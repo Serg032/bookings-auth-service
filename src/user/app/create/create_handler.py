@@ -7,7 +7,7 @@ from src.user.domain.exceptions.user_already_created_exception import (
     UserAlreadyCreatedException,
 )
 from src.user.domain.repository_interface import Repository
-from src.user.domain.register_command import CreateCommand
+from src.user.app.create.create_command import CreateCommand
 from src.user.domain.helpers.guard_email_well_formed import is_mail_well_formed
 
 
@@ -19,19 +19,6 @@ class CreateHandler:
         self._repository = repository
 
     def handle(self, command: CreateCommand) -> None:
-        is_mail_well_formed_result = is_mail_well_formed(command._email)
-
-        if is_mail_well_formed_result is False:
-            raise EmailNotWellFormedException(
-                f"Email {command._email} is not well formed"
-            )
-
-        created_user = self._repository.find_by_email(command._email)
-
-        if created_user is not None:
-            raise UserAlreadyCreatedException(
-                f"User already created with email {command._email}"
-            )
 
         self._repository.create(
             User(
