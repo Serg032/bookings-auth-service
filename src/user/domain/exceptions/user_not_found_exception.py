@@ -2,6 +2,6 @@ from src.user.domain.exceptions.domain_exception_interface import DomainExceptio
 
 
 class UserNotFoundException(DomainException):
-    def __init__(self, id: str | None = None) -> None:
-        self.message = f"User with id {id} not found"
+    def __init__(self, value: str | None = None) -> None:
+        self.message = f"User with {value} not found"
         super().__init__(self.message)

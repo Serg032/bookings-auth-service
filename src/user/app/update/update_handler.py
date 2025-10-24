@@ -14,7 +14,7 @@ class UpdateHandler:
         user_to_update: User | None = self._repository.find_by_id(id)
 
         if user_to_update is None:
-            raise UserNotFoundException(id)
+            raise UserNotFoundException(f"id {id}")
 
         user = self._repository.update(user_to_update, command)
 

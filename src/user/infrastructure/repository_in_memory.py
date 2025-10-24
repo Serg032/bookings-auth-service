@@ -21,12 +21,13 @@ class RepositoryInMemory(Repository):
         return user
 
     def find_by_email(self, email: str) -> Optional[User]:
-        for user in self._users:
+        user: User | None = None
 
-            if user._email == email:
-                return user
+        for user_at_repository in self._users:
+            if user_at_repository._email.get_value() == email:
+                user = user_at_repository
 
-        return None
+        return user
 
     def update(self, user: User, command: UpdateCommand) -> Optional[User]:
         if command._username is not None:

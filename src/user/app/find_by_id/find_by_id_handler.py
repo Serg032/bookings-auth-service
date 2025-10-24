@@ -15,6 +15,6 @@ class FindByIdHandler:
         user = self._repository.find_by_id(id)
 
         if user is None:
-            raise UserNotFoundException(id)
+            raise UserNotFoundException(f"id {id}")
 
         return PublicUser(user._id, user._name, user._surname, user._email.get_value())
