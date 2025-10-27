@@ -76,8 +76,7 @@ async def controller(body: RegisterBody):
         if login_output is None:
             raise WrongLoginException()
 
-        # Update user with refresh token
-        
+        # TODO Update user with refresh token
 
         return {
             "succesfull-message": "going well",
