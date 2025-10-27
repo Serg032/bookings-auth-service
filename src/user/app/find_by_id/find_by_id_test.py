@@ -1,19 +1,21 @@
+from uuid import uuid4
 import pytest
 from src.user.app.create.create_handler import CreateHandler
 from src.user.app.find_by_id.find_by_id_handler import FindByIdHandler
 from src.user.app.create.create_command import CreateCommand
 from src.user.domain.exceptions.user_not_found_exception import UserNotFoundException
-from src.user.infrastructure.repository_in_memory import RepositoryInMemory
+from src.user.infrastructure.adapters.repository_in_memory import RepositoryInMemory
 
 
 def test_find_by_id_handler_successfull():
     repository = RepositoryInMemory()
     create_handler = CreateHandler(repository)
+    id = uuid4()
     user_name = "Jonh"
     user_surname = "Doe"
     user_email = "johndoe@test.com"
     user_password = "12345678"
-    command = CreateCommand(user_name, user_surname, user_email, user_password)
+    command = CreateCommand(id, user_name, user_surname, user_email, user_password)
     create_handler.handle(command)
 
     user_id = repository._users[0]._id

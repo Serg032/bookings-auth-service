@@ -1,4 +1,7 @@
 .env
+.env_old
+.env_dev
+.env_pro
 venv
 __pycache__
 .pytest_cache

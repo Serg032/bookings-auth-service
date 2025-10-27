@@ -22,7 +22,7 @@ class PostgresRepository(Repository):
     def create(self, user: User) -> None:
         if self._password_hasher is None:
             raise Exception("Password Haser neded when creating a user")
-        hashed_password = self._password_hasher.hash(user._password)
+        hashed_password = self._password_hasher.hash(user._password.get_value())
         user_to_insert = user.to_dict()
         user_to_insert["password"] = hashed_password
         self._supabase.table(self._users_tablename).insert(user_to_insert).execute()
