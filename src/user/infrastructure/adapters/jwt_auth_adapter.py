@@ -20,13 +20,13 @@ class JWTAuthAdapter(AuthAdapter):
     def create_access_token_payload():
         return
 
-    def login(self, username: str, password: str) -> Optional[LoginOutput]:
-        user = self._repository.find_by_username(username)
+    def login(self, email: str, password: str) -> Optional[LoginOutput]:
+        user = self._repository.find_by_email(email)
 
         if user is None:
             return None
 
-        if not self._password_hasher.verify(user._password, password):
+        if not self._password_hasher.verify(user._password.get_value(), password):
             return None
 
         now = datetime.now(timezone.utc)

@@ -1,0 +1,9 @@
+ENVIRONMENT=development
+SUPABASE_URL=http://127.0.0.1:54321
+SUPABASE_KEY=sb_secret_N7UND0UgjKTVK-Uodkm0Hg_xSvEMPvz
+ACCESS_TOKEN_SECRET=una_clave_ultra_segura_para_access
+REFRESH_TOKEN_SECRET=una_clave_ultra_segura_para_refresh
+API_URL_ATEST=http://127.0.0.1:8000
+USERS_TABLENAME=users
+PRO_USERS_TABLENAME=users
+TEST_USERS_TABLENAME=users
