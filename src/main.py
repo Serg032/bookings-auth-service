@@ -67,7 +67,7 @@ async def controller(body: RegisterBody):
 
         create_controller.execute(command)
 
-        # Loging
+        # Logging
         auth_adapter = JWTAuthAdapter(repository, password_hasher)
         login_handler = LoginHandler(auth_adapter)
 
