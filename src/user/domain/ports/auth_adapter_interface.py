@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Optional
-from src.user.domain.login_output import LoginOutput
+from src.user.app.auth.login.login_output import LoginOutput
 
 
 class AuthAdapter(ABC):

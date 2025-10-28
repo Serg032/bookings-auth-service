@@ -1,6 +1,6 @@
 from typing import Optional
-from src.user.domain.auth_adapter_interface import AuthAdapter
-from src.user.domain.login_output import LoginOutput
+from src.user.domain.ports.auth_adapter_interface import AuthAdapter
+from src.user.app.auth.login.login_output import LoginOutput
 
 
 class LoginHandler:

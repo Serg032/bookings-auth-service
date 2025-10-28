@@ -1,6 +1,6 @@
 from typing import Optional
 from src.user.domain.entities.public_user import PublicUser
-from src.user.domain.repository_interface import Repository
+from src.user.domain.ports.repository_interface import Repository
 from src.user.domain.exceptions.user_not_found_exception import UserNotFoundException
 
 

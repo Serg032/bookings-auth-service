@@ -1,7 +1,7 @@
 from typing import List, Optional
-from src.user.domain.repository_interface import Repository
+from src.user.app.update.update_command import UpdateCommand
+from src.user.domain.ports.repository_interface import Repository
 from src.user.domain.entities.entity import User
-from src.user.domain.update_command import UpdateCommand
 
 
 class RepositoryInMemory(Repository):
@@ -29,9 +29,27 @@ class RepositoryInMemory(Repository):
 
         return user
 
-    def update(self, user: User, command: UpdateCommand) -> Optional[User]:
-        if command._username is not None:
-            user._username = command._username
+    def update(self, command: UpdateCommand) -> None:
+        user_to_update: User | None = None
+
+        for user in self._users:
+            if user._id == command._id:
+                user_to_update = user
+
+        if user_to_update is None:
+            return None
+
+        if command._name is not None:
+            user._name = command._name
+
+        if command._surname is not None:
+            user._surname = command._surname
+
+        if command._surname is not None:
+            user._email = command._email
+
+        if command._email is not None:
+            user._email = command._email
 
         if command._refresh_token is not None:
             user._refresh_token = command._refresh_token
@@ -39,5 +57,3 @@ class RepositoryInMemory(Repository):
         for user_at_repository in self._users:
             if user_at_repository._id == user._id:
                 user_at_repository = user
-
-        return user

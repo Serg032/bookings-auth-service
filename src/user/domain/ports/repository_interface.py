@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Optional
+from src.user.app.update.update_command import UpdateCommand
 from src.user.domain.entities.entity import User
-from src.user.domain.update_command import UpdateCommand
 
 
 class Repository(ABC):
@@ -18,5 +18,5 @@ class Repository(ABC):
         pass
 
     @abstractmethod
-    def update(self, user: User, command: UpdateCommand) -> Optional[User]:
+    def update(self, user: User, command: UpdateCommand) -> None:
         pass

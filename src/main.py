@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from src.user.app.auth.login.login_handler import LoginHandler
 from src.user.app.create.create_handler import CreateHandler
 from src.user.app.find_by_email.find_by_email_handler import FindByEmailHandler
+from src.user.app.update.update_handler import UpdateHandler
 from src.user.domain.exceptions.email_not_well_formed_exception import (
     EmailNotWellFormedException,
 )
@@ -23,6 +24,9 @@ from src.user.domain.exceptions.user_already_created_exception import (
     UserAlreadyCreatedException,
 )
 from fastapi import HTTPException
+
+from src.user.infrastructure.controllers.login_controller import LoginController
+from src.user.infrastructure.controllers.update_controller import UpdateController
 
 load_dotenv()
 
@@ -70,17 +74,29 @@ async def controller(body: RegisterBody):
         # Logging
         auth_adapter = JWTAuthAdapter(repository, password_hasher)
         login_handler = LoginHandler(auth_adapter)
+        login_controller = LoginController(login_handler)
 
-        login_output = login_handler.handle(command["email"], command["password"])
+        login_output = login_controller.execute(command)
 
         if login_output is None:
             raise WrongLoginException()
 
-        # TODO Update user with refresh token
+        # Update user with refresh token
+        update_handler = UpdateHandler(repository)
+        update_controller = UpdateController(update_handler)
+
+        update_controller.execute(
+            {
+                "id": command["id"],
+                "name": None,
+                "surname": None,
+                "email": None,
+                "refresh_token": login_output.to_dict()["refresh_token"],
+            }
+        )
 
         return {
-            "succesfull-message": "going well",
-            "login-output": login_output.to_dict(),
+            "accessToken": login_output.to_dict()["access_token"],
         }
 
     except UserAlreadyCreatedException as e:

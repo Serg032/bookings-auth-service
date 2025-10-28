@@ -3,10 +3,10 @@ import jwt
 from typing import Optional
 from datetime import datetime, timedelta, timezone
 from dotenv import load_dotenv
-from src.user.domain.auth_adapter_interface import AuthAdapter
-from src.user.domain.login_output import LoginOutput
-from src.user.domain.repository_interface import Repository
-from src.user.domain.password_hasher_interface import PasswordHasher
+from src.user.app.auth.login.login_output import LoginOutput
+from src.user.domain.ports.auth_adapter_interface import AuthAdapter
+from src.user.domain.ports.repository_interface import Repository
+from src.user.domain.ports.password_hasher_interface import PasswordHasher
 
 
 class JWTAuthAdapter(AuthAdapter):

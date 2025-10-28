@@ -1,11 +1,11 @@
 import os
 from typing import Optional
-from src.user.domain.repository_interface import Repository
+from src.user.app.update.update_command import UpdateCommand
+from src.user.domain.ports.repository_interface import Repository
 from src.user.domain.entities.entity import User
 from supabase import create_client, Client
 from dotenv import load_dotenv
-from src.user.domain.password_hasher_interface import PasswordHasher
-from src.user.domain.update_command import UpdateCommand
+from src.user.domain.ports.password_hasher_interface import PasswordHasher
 
 
 class PostgresRepository(Repository):
@@ -53,29 +53,24 @@ class PostgresRepository(Repository):
 
             return marshalled_user
 
-    def update(self, user: User, command: UpdateCommand) -> Optional[User]:
+    def update(self, command: UpdateCommand) -> None:
         update_fields: dict = {}
 
-        if command._username is not None:
-            update_fields["username"] = command._username
+        if command._name is not None:
+            update_fields["name"] = command.name
+
+        if command._surname is not None:
+            update_fields["surname"] = command._surname
+
+        if command._email is not None:
+            update_fields["email"] = command._email
+
         if command._refresh_token is not None:
             update_fields["refresh_token"] = command._refresh_token
 
-        if not update_fields:
-            return user
-
-        response = (
-            self._supabase.table(self._users_tablename)
-            .update(update_fields)
-            .eq("id", user._id)
-            .execute()
-        )
-
-        if response and response.data and response.data[0] is not None:
-            updated = response.data[0]
-            return User.unmarshall(updated)
-
-        return None
+            self._supabase.table(self._users_tablename).update(update_fields).eq(
+                "id", command._id
+            ).execute()
 
     def clear_database(self, username: str):
         # Supabase requiere un filtro en delete(); usamos uno que coincide con todas las filas

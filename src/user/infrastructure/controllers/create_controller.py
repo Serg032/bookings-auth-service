@@ -20,7 +20,6 @@ class CreateController(Controller):
         self,
         command: CreateCommandDict | None,
     ) -> None:
-        print("COMMAND", command)
         command_obj = CreateCommand(
             command["id"],
             command["name"],
