@@ -7,7 +7,7 @@ class UpdateController(Controller):
     def __init__(self, handler: UpdateHandler) -> None:
         self._handler = handler
 
-    def execute(self, args: dict | None):
+    def execute(self, args: dict | None) -> None:
         command = UpdateCommand(
             {
                 "id": args["id"],

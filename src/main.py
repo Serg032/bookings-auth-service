@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from fastapi import FastAPI
+from fastapi import FastAPI, status
 from pydantic import BaseModel
 from src.user.app.auth.login.login_handler import LoginHandler
 from src.user.app.create.create_handler import CreateHandler
@@ -9,9 +9,11 @@ from src.user.app.update.update_handler import UpdateHandler
 from src.user.domain.exceptions.email_not_well_formed_exception import (
     EmailNotWellFormedException,
 )
+from src.user.domain.exceptions.password_login_exception import PasswordLoginException
 from src.user.domain.exceptions.password_minimun_len_exception import (
     PasswordMinimunLenException,
 )
+from src.user.domain.exceptions.user_not_found_exception import UserNotFoundException
 from src.user.domain.exceptions.wrong_login import WrongLoginException
 from src.user.infrastructure.adapters.bcrypt_password_hasher import BcryptPasswordHasher
 from src.user.infrastructure.adapters.jwt_auth_adapter import JWTAuthAdapter
@@ -39,6 +41,11 @@ class RegisterBody(BaseModel):
     password: str
 
 
+class LoginBody(BaseModel):
+    email: str
+    password: str
+
+
 class UpdateBody(BaseModel):
     username: str | None
     refresh_token: str | None
@@ -49,7 +56,7 @@ users_tablename = os.getenv("USERS_TABLENAME", "users")
 
 
 @app.post("/register")
-async def controller(body: RegisterBody):
+async def register(body: RegisterBody):
     try:
         # Is email already registered?
         password_hasher = BcryptPasswordHasher()
@@ -110,3 +117,51 @@ async def controller(body: RegisterBody):
 
     except WrongLoginException as e:
         raise HTTPException(status_code=409, detail=str(e))
+
+    except e:
+        raise HTTPException(status_code=500, detail=e)
+
+
+@app.post("/login", status_code=status.HTTP_200_OK)
+async def login(body: LoginBody):
+    try:
+        # Find user by email:
+        password_hasher = BcryptPasswordHasher()
+        repository = PostgresRepository(users_tablename, password_hasher)
+        find_by_email_handler = FindByEmailHandler(repository)
+        find_by_email_controller = FindByEmailController(find_by_email_handler)
+        command = body.model_dump()
+
+        user = find_by_email_controller.execute(command)
+
+        if user is None:
+            raise UserNotFoundException(f"with email {command["email"]}")
+
+        # Create tokens
+        auth_adapter = JWTAuthAdapter(repository, password_hasher)
+        login_handler = LoginHandler(auth_adapter)
+        login_controller = LoginController(login_handler)
+
+        login_output = login_controller.execute(command)
+
+        # Update user with new Refresh Token
+        update_handler = UpdateHandler(repository)
+        update_controller = UpdateController(update_handler)
+
+        update_controller.execute(
+            {
+                "id": user.id,
+                "name": None,
+                "surname": None,
+                "email": None,
+                "refresh_token": login_output._refresh_token,
+            }
+        )
+
+        return {"access_token": login_output.to_dict()["access_token"]}
+
+    except PasswordLoginException as e:
+        raise HTTPException(status_code=409, detail=e)
+
+    except e:
+        raise HTTPException(status_code=500, detail=e)
