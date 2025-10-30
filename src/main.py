@@ -46,16 +46,11 @@ class LoginBody(BaseModel):
     password: str
 
 
-class UpdateBody(BaseModel):
-    username: str | None
-    refresh_token: str | None
-
-
 app = FastAPI()
 users_tablename = os.getenv("USERS_TABLENAME", "users")
 
 
-@app.post("/register")
+@app.post("/register", status_code=status.HTTP_201_CREATED)
 async def register(body: RegisterBody):
     try:
         # Is email already registered?
